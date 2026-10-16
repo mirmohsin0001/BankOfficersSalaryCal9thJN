@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bank Officers Salary Calculator – 9th Joint Note</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5f1;--card:#fff;--ink:#17231d;--mute:#5d6b63;--line:#d8dfd9;--accent:#1f5c46;--accent-ink:#fff;--soft:#e4efe9;--warn:#8a5a00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101814;--card:#18231d;--ink:#e8efe9;--mute:#9bab a1;--mute:#9baba1;--line:#2a3a31;--accent:#6fc79f;--accent-ink:#0b1510;--soft:#1f3329;--warn:#e3b04b}}
+:root[data-theme="dark"]{--bg:#101814;--card:#18231d;--ink:#e8efe9;--mute:#9baba1;--line:#2a3a31;--accent:#6fc79f;--accent-ink:#0b1510;--soft:#1f3329;--warn:#e3b04b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 16px 48px}
+h1{font:700 clamp(1.7rem,5vw,2.5rem)/1.1 Fraunces,Georgia,serif;margin:8px 0 6px}
+.sub{color:var(--mute);margin:0 0 18px;max-width:62ch}
+.tabs{display:flex;gap:6px;margin-bottom:14px}
+.tabs button{flex:1;padding:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font:600 .95rem Inter,sans-serif;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+label{display:block;font-weight:500;font-size:.88rem;margin:12px 0 4px}
+select,input[type=number]{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+select:focus,input:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.chk{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:.9rem}
+.chk input{width:18px;height:18px}
+table{width:100%;border-collapse:collapse;font-size:.93rem}
+td{padding:7px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+tr.sec td{font-weight:600;padding-top:14px;border-bottom:2px solid var(--line)}
+tr.tot td{font-weight:700;border-bottom:0}
+.net{background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:16px;margin-bottom:12px}
+.net b{display:block;font:700 2.1rem/1.1 Fraunces,Georgia,serif}
+.net span{opacity:.85;font-size:.88rem}
+.note{font-size:.82rem;color:var(--mute);margin-top:14px}
+.warn{color:var(--warn)}
+.hide{display:none}
+.pill{display:inline-block;background:var(--soft);padding:2px 9px;border-radius:99px;font-size:.8rem}
+</style></head>
+<body><div class="wrap">
+<h1>Officers' salary calculator</h1>
+<p class="sub">Based on the 9th Joint Note dated 08-03-2024 (IBA &amp; Officers' Associations), pay revision effective 01.11.2022. Estimates only.</p>
+<div class="tabs" role="tablist">
+<button role="tab" id="t1" aria-selected="true">Monthly salary</button>
+<button role="tab" id="t2" aria-selected="false">Fitment on promotion</button>
+</div>
+
+<section id="p1" class="grid">
+<div class="card">
+<label for="scale">Scale</label><select id="scale"></select>
+<label for="stage">Stage in scale</label><select id="stage"></select>
+<label for="pqp">Professional Qualification Pay</label>
+<select id="pqp"><option value="0">None</option><option value="1370">PQP-I – ₹1,370 (JAIIB/CAIIB)</option><option value="3425">PQP-II – ₹3,425 (CAIIB)</option><option value="5480">PQP-III – ₹5,480 (CAIIB)</option></select>
+<label for="fpp">Fixed Personal Pay increment component (₹, optional)</label>
+<input type="number" id="fpp" min="0" value="0">
+<label for="place">Place of posting</label>
+<select id="place">
+<option value="10,2300,0">Major 'A' class city / Project area Group A (HRA 10%, CCA ₹2,300)</option>
+<option value="9,2300,0">Area I / Group B / Goa (HRA 9%, CCA ₹2,300)</option>
+<option value="8,1900,0">5 lakh+ population / state capital (HRA 8%, CCA ₹1,900)</option>
+<option value="8,0,1200">Other places (HRA 8%, Location Allowance ₹1,200)</option>
+</select>
+<div class="chk"><input type="checkbox" id="acc"><label for="acc" style="margin:0">Bank accommodation provided (no HRA, house rent recovery applies)</label></div>
+<label for="cpi">Quarterly average CPI-IW (2016=100)</label>
+<input type="number" id="cpi" step="0.01" value="153.00">
+<div class="note">DA = 1% of Pay per CPI point over 123.03. The value above is a placeholder: enter the latest figure applicable to your quarter.</div>
+<label for="sch">Retirement scheme</label>
+<select id="sch"><option value="nps">NPS / DCPS – 10% of Pay + DA (bank adds 14%)</option><option value="pf">Pension scheme – PF 10% of Pay</option></select>
+</div>
+
+<div>
+<div class="net"><span>Estimated net monthly (before income tax)</span><b id="net">–</b><span id="ann"></span></div>
+<div class="card"><table id="out"></table>
+<div class="note">Not included: Hill &amp; Fuel / Special Area Allowance, Officiating Pay, Deputation, Closing and Halting Allowances, income tax. Special Allowance is applied on the stage pay with DA thereon. Always confirm final figures with your bank's HR.</div></div>
+</div>
+</section>
+
+<section id="p2" class="hide">
+<div class="grid">
+<div class="card">
+<label for="fs">Current scale</label><select id="fs"></select>
+<label for="fst">Current stage</label><select id="fst"></select>
+<label for="ts">Promoted to scale</label><select id="ts"></select>
+</div>
+<div>
+<div class="net"><span>Pay after fitment</span><b id="fres">–</b><span id="fdet"></span></div>
+<div class="card"><table id="fout"></table>
+<div class="note">Clause 7: on promotion, the officer is fitted at a higher stage in the new scale with protection of a minimum differential of one increment in the Pay drawn in the pre-promoted scale. Fitment is stage-to-stage in the Annexure III &amp; IV scales; the date of annual increment does not change.</div></div>
+<div class="card" style="margin-top:12px"><b>Clerical to Officer (from your photo)</b>
+<p class="note" style="margin-top:6px">Those drawing basic pay up to the 8th stage of the clerical scale are fitted at the minimum of the Officers' scale (Scale I: ₹48,480) and draw their next increment on the anniversary date of promotion. Those higher up are fitted per the clerical-to-officer fitment table, which is not in the Joint Note provided, so it is not calculated here.</p></div>
+</div></div>
+</section>
+</div>
+<script>
+const R=(a,n)=>a.slice(0,n);
+const SC={
+"Scale I":{n:"JMGS I",sp:26.5,ns:7,s:[48480,50480,52480,54480,56480,58480,60480,62480,64820,67160,69840,72520,75200,77880,80560,83240,85920,88600,91280,93960,96640,99320,102300,105280,108260,111240,114220]},
+"Scale II":{n:"MMGS II",sp:28.3,ns:7,s:[64820,67160,69840,72520,75200,77880,80560,83240,85920,88600,91280,93960,96640,99320,102300,105280,108260,111240,114220,117200,120180,123540,126900]},
+"Scale III":{n:"MMGS III",sp:28.3,ns:8,s:[85920,88600,91280,93960,96640,99320,102300,105280,108260,111240,114220,117200,120560,123920,127600,131280]},
+"Scale IV":{n:"SMGS IV",sp:30.5,ns:5,s:[102300,105280,108260,111240,114220,117580,120940,124300,127980,131980,135980,139980]},
+"Scale V":{n:"SMGS V",sp:30.5,ns:4,s:[120940,124300,127660,131340,135020,139020,143020,147360,151700]},
+"Scale VI":{n:"TEGS VI",sp:31.5,ns:3,s:[140500,144500,148500,152500,156500,160840,165180,169520]},
+"Scale VII":{n:"TEGS VII",sp:31.5,ns:3,s:[156500,160840,165180,169520,173860,178560,183260,187960]}};
+const K=Object.keys(SC),$=id=>document.getElementById(id);
+const inr=v=>"₹"+Math.round(v).toLocaleString("en-IN");
+function fillScales(el,list){el.innerHTML=list.map(k=>`<option value="${k}">${k} (${SC[k].n})</option>`).join("")}
+function fillStages(sel,key,keep){const d=SC[key],n=d.s.length-d.ns;
+sel.innerHTML=d.s.map((p,i)=>`<option value="${i}">${i<n?"Stage "+(i+1):"Stagnation +"+(i-n+1)} – ${inr(p)}</option>`).join("");
+if(keep!=null&&keep<d.s.length)sel.value=keep}
+function row(a,b,c){return `<tr class="${c||""}"><td>${a}</td><td>${b}</td></tr>`}
+function calc(){
+const d=SC[$("scale").value],basic=d.s[+$("stage").value],pqp=+$("pqp").value,fpp=Math.max(0,+$("fpp").value||0);
+const [hr,cca,loc]=$("place").value.split(",").map(Number),acc=$("acc").checked;
+const cpi=+$("cpi").value||0,dap=Math.max(0,Math.round((cpi-123.03)*100)/100);
+const pay=basic+pqp+fpp,daPay=basic+pqp,da=daPay*dap/100;
+const sa=basic*d.sp/100,daSa=sa*dap/100,la=850,daLa=la*dap/100;
+const hra=acc?0:pay*hr/100;
+const gross=pay+da+sa+daSa+la+daLa+hra+cca+loc;
+const ded=$("sch").value==="nps"?(pay+da)*0.10:pay*0.10;
+const rent=acc?SC[$("scale").value].s[0]*0.0035:0;
+const net=gross-ded-rent;
+$("net").textContent=inr(net);$("ann").textContent="Gross "+inr(gross)+" per month · "+inr(net*12)+" net per year";
+$("out").innerHTML=row("Earnings","","sec")+row("Basic pay (stage)",inr(basic))+(pqp?row("Professional Qualification Pay",inr(pqp)):"")+(fpp?row("Fixed Personal Pay (increment)",inr(fpp)):"")
++row(`Dearness Allowance @ ${dap.toFixed(2)}%`,inr(da))+row(`Special Allowance @ ${d.sp}%`,inr(sa))+row("DA on Special Allowance",inr(daSa))
++row("Learning Allowance",inr(la))+row("DA on Learning Allowance",inr(daLa))+(acc?"":row(`House Rent Allowance @ ${hr}%`,inr(hra)))
++(cca?row("City Compensatory Allowance",inr(cca)):"")+(loc?row("Location Allowance",inr(loc)):"")+row("Gross",inr(gross),"tot")
++row("Deductions","","sec")+row($("sch").value==="nps"?"NPS contribution (10% of Pay + DA)":"Provident Fund (10% of Pay)",inr(ded))+(acc?row("House rent recovery (0.35% of first stage)",inr(rent)):"")
++row("Net (before income tax)",inr(net),"tot")
++($("sch").value==="nps"?row("Bank's NPS contribution (14% of Pay + DA)",inr((pay+da)*0.14)):"");
+}
+function fit(){
+const f=SC[$("fs").value],i=+$("fst").value,cur=f.s[i];
+const inc=i<f.s.length-1?f.s[i+1]-cur:cur-f.s[i-1];
+const t=SC[$("ts").value],target=cur+inc;
+const j=t.s.findIndex(p=>p>=target),idx=j<0?t.s.length-1:j,np=t.s[idx];
+const n=t.s.length-t.ns;
+$("fres").textContent=inr(np);
+$("fdet").textContent=(idx<n?"Stage "+(idx+1):"Stagnation +"+(idx-n+1))+" of "+$("ts").value;
+$("fout").innerHTML=row("Current pay",inr(cur))+row("One increment (protection)",inr(inc))+row("Minimum pay needed",inr(target))
++row("Fitted pay in new scale",inr(np),"tot")+row("Gain on promotion",inr(np-cur))
++(j<0?row("<span class='warn'>Pay needed exceeds this scale's top; shown at the maximum.</span>",""):"");
+}
+function fillTo(){const fi=K.indexOf($("fs").value),c=$("ts").value;
+$("ts").innerHTML=K.slice(fi+1).map(k=>`<option value="${k}">${k} (${SC[k].n})</option>`).join("");
+if(!K.slice(fi+1).includes(c)){}else $("ts").value=c;fit()}
+fillScales($("scale"),K);fillStages($("stage"),K[0],0);
+fillScales($("fs"),K.slice(0,-1));fillStages($("fst"),K[0],0);fillTo();
+$("scale").onchange=()=>{fillStages($("stage"),$("scale").value,0);calc()};
+$("fs").onchange=()=>{fillStages($("fst"),$("fs").value,0);fillTo()};
+$("fst").onchange=fit;$("ts").onchange=fit;
+["stage","pqp","fpp","place","acc","cpi","sch"].forEach(id=>{$(id).oninput=calc;$(id).onchange=calc});
+$("t1").onclick=$("t2").onclick=e=>{const a=e.target.id==="t1";
+$("t1").setAttribute("aria-selected",a);$("t2").setAttribute("aria-selected",!a);
+$("p1").classList.toggle("hide",!a);$("p2").classList.toggle("hide",a)};
+calc();
+</script></body></html>
